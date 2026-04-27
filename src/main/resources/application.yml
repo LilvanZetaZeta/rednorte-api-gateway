@@ -1,0 +1,18 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: ms-gestion
+          uri: ${MS_GESTION_URL}
+          predicates:
+            - Path=/api/gestion/**
+            
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH0_ISSUER_URI}
+          audiences: ${AUTH0_AUDIENCE}
