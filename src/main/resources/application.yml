@@ -9,6 +9,18 @@ spring:
           uri: ${MS_GESTION_URL}
           predicates:
             - Path=/api/gestion/**
+        - id: ms-notificaciones
+          uri: ${MS_NOTIFICACIONES_URL}
+          predicates:
+            - Path=/api/notificaciones/**
+        - id: ms-portal
+          uri: ${MS_PORTAL_URL}
+          predicates:
+            - Path=/api/portal/**
+        - id: ms-reasignacion
+          uri: ${MS_REASIGNACION_URL}
+          predicates:
+            - Path=/api/reasignacion/** 
             
   security:
     oauth2:
@@ -16,3 +28,9 @@ spring:
         jwt:
           issuer-uri: ${AUTH0_ISSUER_URI}
           audiences: ${AUTH0_AUDIENCE}
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health
