@@ -1,0 +1,15 @@
+target/
+*.jar
+.git/
+.mvn/
+mvnw
+mvnw.cmd
+.env
+.env.properties
+.vscode/
+.idea/
+*.iml
+Dockerfile
+docker-compose.yml
+.gitignore
+README.md
