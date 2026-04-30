@@ -9,14 +9,37 @@ spring:
           uri: ${MS_GESTION_URL}
           predicates:
             - Path=/api/gestion/**
+        
+        - id: ms-gestion-centros
+          uri: ${MS_GESTION_URL}
+          predicates:
+            - Path=/api/centros-medicos/**
+            
+        - id: ms-gestion-usuarios
+          uri: ${MS_GESTION_URL}
+          predicates:
+            - Path=/api/usuarios/**
+            
+        - id: ms-gestion-reservas
+          uri: ${MS_GESTION_URL}
+          predicates:
+            - Path=/api/reservas/**
+            
+        - id: ms-gestion-lista-espera
+          uri: ${MS_GESTION_URL}
+          predicates:
+            - Path=/api/lista-espera/**
+
         - id: ms-notificaciones
           uri: ${MS_NOTIFICACIONES_URL}
           predicates:
             - Path=/api/notificaciones/**
+
         - id: ms-portal
           uri: ${MS_PORTAL_URL}
           predicates:
             - Path=/api/portal/**
+            
         - id: ms-reasignacion
           uri: ${MS_REASIGNACION_URL}
           predicates:
