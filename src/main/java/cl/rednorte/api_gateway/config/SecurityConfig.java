@@ -22,8 +22,11 @@ public class SecurityConfig {
             // 1. Acoplamos la configuración de CORS al filtro de seguridad
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             .authorizeExchange(exchanges -> exchanges
-                .anyExchange().permitAll()
-            );
+                .pathMatchers("/actuator/health").permitAll()
+                .anyExchange().authenticated()
+                
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
 
