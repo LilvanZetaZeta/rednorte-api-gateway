@@ -2,7 +2,7 @@ server:
   port: ${PORT:8080}
 
 supabase:
-  jwt-secret: ${SUPABASE_JWT_SECRET}
+  jwks-uri: https://aevwqvfahukxqewqlnxs.supabase.co/auth/v1/.well-known/jwks.json
 
 spring:
   cloud:
