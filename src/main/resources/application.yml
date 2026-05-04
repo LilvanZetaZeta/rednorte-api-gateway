@@ -1,55 +1,30 @@
 server:
-  port: ${PORT:8080}
-
-supabase:
-  jwks-uri: https://aevwqvfahukxqewqlnxs.supabase.co/auth/v1/.well-known/jwks.json
+  port: 8080
 
 spring:
   cloud:
     gateway:
       routes:
         - id: ms-gestion
-          uri: ${MS_GESTION_URL}
+          uri: http://localhost:8081
           predicates:
-            - Path=/api/gestion/**
-        
-        - id: ms-gestion-centros
-          uri: ${MS_GESTION_URL}
-          predicates:
-            - Path=/api/centros-medicos/**
-            
-        - id: ms-gestion-usuarios
-          uri: ${MS_GESTION_URL}
-          predicates:
-            - Path=/api/usuarios/**
-            
-        - id: ms-gestion-reservas
-          uri: ${MS_GESTION_URL}
-          predicates:
-            - Path=/api/reservas/**
-            
-        - id: ms-gestion-lista-espera
-          uri: ${MS_GESTION_URL}
-          predicates:
-            - Path=/api/lista-espera/**
+            # RUTAS CORREGIDAS (Sin espacios entre las comas)
+            - Path=/api/gestion/**,/api/centros-medicos/**,/api/usuarios/**,/api/reservas/**,/api/lista-espera/**
 
-        - id: ms-notificaciones
-          uri: ${MS_NOTIFICACIONES_URL}
-          predicates:
-            - Path=/api/notificaciones/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Esta es la ruta que contiene las llaves públicas ES256 de tu proyecto
+          jwk-set-uri: https://eqmboygugsouuzoezpvh.supabase.co/auth/v1/.well-known/jwks.json
+  
+  logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
 
-        - id: ms-portal
-          uri: ${MS_PORTAL_URL}
-          predicates:
-            - Path=/api/portal/**
-            
-        - id: ms-reasignacion
-          uri: ${MS_REASIGNACION_URL}
-          predicates:
-            - Path=/api/reasignacion/** 
-            
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
