@@ -22,7 +22,6 @@ spring:
           uri: ${MS_NOTIFICACIONES_URL:http://localhost:8085}
           predicates:
             - Path=/api/notificaciones/**
-
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
