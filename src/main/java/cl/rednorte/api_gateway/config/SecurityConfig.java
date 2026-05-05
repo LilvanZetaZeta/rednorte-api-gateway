@@ -48,6 +48,13 @@ public class SecurityConfig {
                 // RUTAS DE MÉDICOS
                 .pathMatchers(HttpMethod.GET, "/api/reservas/medico/**").hasRole("MEDICO")
 
+                // RUTAS DE REASIGNACIÓN
+                // Registrar cupos y crear ofertas: ADMINISTRATIVO o DIRECTOR
+                .pathMatchers(HttpMethod.POST, "/api/reasignaciones/cupos").hasAnyRole("ADMINISTRATIVO", "DIRECTOR")
+                .pathMatchers(HttpMethod.POST, "/api/reasignaciones").hasAnyRole("ADMINISTRATIVO", "DIRECTOR")
+                // Responder oferta: lo hace el paciente (cualquier autenticado le sirve)
+                .pathMatchers(HttpMethod.PATCH, "/api/reasignaciones/*/respuesta").authenticated()
+
                 //  CUALQUIER OTRA RUTA Requiere que el usuario esté logueado
                 .anyExchange().authenticated()
             )
