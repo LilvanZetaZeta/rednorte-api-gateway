@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, "/api/centros-medicos/**").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.PUT, "/api/centros-medicos/**").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.DELETE, "/api/centros-medicos/**").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.GET, "/api/gestion/metricas/**").hasRole("DIRECTOR")
 
                 // RUTAS DE ADMINISTRATIVOS Y DIRECTORES
                 .pathMatchers(HttpMethod.GET, "/api/lista-espera/centro/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
