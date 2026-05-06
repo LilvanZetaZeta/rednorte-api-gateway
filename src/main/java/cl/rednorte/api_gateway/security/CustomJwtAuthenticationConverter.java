@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono;
 import cl.rednorte.api_gateway.dto.UsuarioPerfilDto;
 
 import java.util.Collections;
-import java.util.List;
 
 @Component
 public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
@@ -22,13 +21,14 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
     private final WebClient webClient;
 
     public CustomJwtAuthenticationConverter(
-            WebClient.Builder webClientBuilder, 
-            @Value("${MS_GESTION_URL:http://localhost:8081}") String baseUrl) {
-        this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+            WebClient.Builder webClientBuilder,
+            @Value("${MS_GESTION_URL:http://localhost:8081}") String msGestionUrl) {
+        this.webClient = webClientBuilder.baseUrl(msGestionUrl).build();
     }
 
     @Override
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
+
         String idAuth = jwt.getSubject();
 
         return webClient.get()
@@ -37,10 +37,9 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
                 .bodyToMono(UsuarioPerfilDto.class)
                 .map(perfil -> {
                     GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + perfil.getRol());
-                    List<GrantedAuthority> authorities = Collections.singletonList(authority);
-                    return (AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, authorities);
+                    return (AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, Collections.singletonList(authority));
                 })
-                .defaultIfEmpty(new JwtAuthenticationToken(jwt, Collections.emptyList()))
-                .onErrorResume(e -> Mono.just(new JwtAuthenticationToken(jwt, Collections.emptyList())));
+                .defaultIfEmpty((AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, Collections.emptyList()))
+                .onErrorResume(e -> Mono.just((AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, Collections.emptyList())));
     }
 }
