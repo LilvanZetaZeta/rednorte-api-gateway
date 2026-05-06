@@ -18,6 +18,12 @@ spring:
           uri: ${MS_GESTION_URL:http://localhost:8081}
           predicates:
             - Path=/api/gestion/**,/api/centros-medicos/**,/api/usuarios/**,/api/reservas/**,/api/lista-espera/**
+        
+        - id: ms-reasignacion-route
+          uri: ${MS_REASIGNACION_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/reasignaciones/**
+        
         - id: ms-notificaciones-route
           uri: ${MS_NOTIFICACIONES_URL:http://localhost:8085}
           predicates:
