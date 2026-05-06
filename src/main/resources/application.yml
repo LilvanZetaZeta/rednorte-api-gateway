@@ -19,6 +19,11 @@ spring:
           predicates:
             - Path=/api/gestion/**,/api/centros-medicos/**,/api/usuarios/**,/api/reservas/**,/api/lista-espera/**
         
+        - id: ms-portal-route
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/portal/**,/api/perfil-pacientes/**,/api/historial-citas/**
+        
         - id: ms-reasignacion-route
           uri: ${MS_REASIGNACION_URL:http://localhost:8083}
           predicates:

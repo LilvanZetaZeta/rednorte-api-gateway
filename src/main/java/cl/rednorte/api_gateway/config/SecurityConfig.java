@@ -21,7 +21,7 @@ public class SecurityConfig {
     @Value("${SUPABASE_JWKS_URI}")
     private String jwkSetUri;
 
-    @Value("${SUPABASE_ANON_KEY}") 
+    @Value("${SUPABASE_ANON_KEY}")
     private String anonKey;
 
     @Autowired
@@ -32,10 +32,10 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeExchange(exchanges -> exchanges
-                // RUTAS PÚBLICAS 
+                // RUTAS PÚBLICAS
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .pathMatchers("/actuator/health").permitAll()
-                .pathMatchers(HttpMethod.POST, "/api/usuarios").permitAll() 
+                .pathMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
 
                 // RUTAS DE DIRECTOR
                 .pathMatchers(HttpMethod.POST, "/api/centros-medicos/**").hasRole("DIRECTOR")
@@ -48,14 +48,16 @@ public class SecurityConfig {
                 // RUTAS DE MÉDICOS
                 .pathMatchers(HttpMethod.GET, "/api/reservas/medico/**").hasRole("MEDICO")
 
-                // RUTAS DE REASIGNACIÓN
-                // Registrar cupos y crear ofertas: ADMINISTRATIVO o DIRECTOR
-                .pathMatchers(HttpMethod.POST, "/api/reasignaciones/cupos").hasAnyRole("ADMINISTRATIVO", "DIRECTOR")
-                .pathMatchers(HttpMethod.POST, "/api/reasignaciones").hasAnyRole("ADMINISTRATIVO", "DIRECTOR")
-                // Responder oferta: lo hace el paciente (cualquier autenticado le sirve)
-                .pathMatchers(HttpMethod.PATCH, "/api/reasignaciones/*/respuesta").authenticated()
+                // ===== RUTAS DEL MS-PORTAL =====
+                .pathMatchers(HttpMethod.GET, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "DIRECTOR")
+                .pathMatchers(HttpMethod.POST, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "DIRECTOR")
+                .pathMatchers(HttpMethod.PUT, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "DIRECTOR")
+                .pathMatchers(HttpMethod.DELETE, "/api/perfil-pacientes/**").hasRole("DIRECTOR")
 
-                //  CUALQUIER OTRA RUTA Requiere que el usuario esté logueado
+                .pathMatchers(HttpMethod.GET, "/api/historial-citas/**").hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRATIVO", "DIRECTOR")
+                .pathMatchers(HttpMethod.POST, "/api/historial-citas/**").hasAnyRole("ADMINISTRATIVO", "MEDICO", "DIRECTOR")
+
+                // CUALQUIER OTRA RUTA
                 .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
