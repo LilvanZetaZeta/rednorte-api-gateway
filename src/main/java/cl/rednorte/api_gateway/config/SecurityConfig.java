@@ -32,34 +32,48 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeExchange(exchanges -> exchanges
+                
                 // RUTAS PÚBLICAS
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .pathMatchers("/actuator/health").permitAll()
                 .pathMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
-                .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-medico").hasRole("DIRECTOR")
-                .pathMatchers(HttpMethod.GET, "/api/usuarios/staff").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
-                .pathMatchers(HttpMethod.PATCH, "/api/usuarios/*/rol").hasRole("DIRECTOR")
+                
+                // RUTAS PARA PORTAL PACIENTE
+                .pathMatchers(HttpMethod.GET, "/api/especialidades/**").permitAll()
+                .pathMatchers(HttpMethod.GET, "/api/centros-medicos/**").permitAll()
+                .pathMatchers(HttpMethod.GET, "/api/usuarios/medicos/buscar").permitAll()
 
-                // RUTAS DE DIRECTOR
+                //  RUTAS EXCLUSIVAS DE DIRECTOR (Integradas con las de tu compañero)
+                .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-medico").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.PATCH, "/api/usuarios/*/rol").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.POST, "/api/centros-medicos/**").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.PUT, "/api/centros-medicos/**").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.DELETE, "/api/centros-medicos/**").hasRole("DIRECTOR")
-                .pathMatchers(HttpMethod.GET, "/api/gestion/metricas/**").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("DIRECTOR")
 
-                // RUTAS DE ADMINISTRATIVOS Y DIRECTORES
-                .pathMatchers(HttpMethod.GET, "/api/lista-espera/centro/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
+                //  RUTAS DE DIRECTOR Y ADMINISTRATIVO LOCAL
+                .pathMatchers(HttpMethod.GET, "/api/usuarios/staff").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
+                
+                //  RUTAS DE MÉTRICAS (Director, Administrativo y Secretaria)
+                .pathMatchers(HttpMethod.GET, "/api/gestion/metricas/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO", "SECRETARIA")
 
-                // RUTAS DE MÉDICOS
+                //  RUTAS DE OPERACIONES (Listas de espera y Agenda del centro)
+                .pathMatchers("/api/lista-espera/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO", "SECRETARIA")
+                .pathMatchers(HttpMethod.GET, "/api/reservas/centro/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO", "SECRETARIA")
+
+                //  RUTAS DE MÉDICOS
                 .pathMatchers(HttpMethod.GET, "/api/reservas/medico/**").hasRole("MEDICO")
 
-                // ===== RUTAS DEL MS-PORTAL =====
-                .pathMatchers(HttpMethod.GET, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "DIRECTOR")
-                .pathMatchers(HttpMethod.POST, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "DIRECTOR")
-                .pathMatchers(HttpMethod.PUT, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "DIRECTOR")
+                // ===== RUTAS DEL MS-PORTAL ===== 
+                // Añadida la SECRETARIA a los permisos de perfiles y citas
+                .pathMatchers(HttpMethod.GET, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "SECRETARIA", "DIRECTOR")
+                .pathMatchers(HttpMethod.POST, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "SECRETARIA", "DIRECTOR")
+                .pathMatchers(HttpMethod.PUT, "/api/perfil-pacientes/**").hasAnyRole("PACIENTE", "ADMINISTRATIVO", "SECRETARIA", "DIRECTOR")
                 .pathMatchers(HttpMethod.DELETE, "/api/perfil-pacientes/**").hasRole("DIRECTOR")
 
-                .pathMatchers(HttpMethod.GET, "/api/historial-citas/**").hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRATIVO", "DIRECTOR")
-                .pathMatchers(HttpMethod.POST, "/api/historial-citas/**").hasAnyRole("ADMINISTRATIVO", "MEDICO", "DIRECTOR")
+                .pathMatchers(HttpMethod.GET, "/api/historial-citas/**").hasAnyRole("PACIENTE", "MEDICO", "ADMINISTRATIVO", "SECRETARIA", "DIRECTOR")
+                .pathMatchers(HttpMethod.POST, "/api/historial-citas/**").hasAnyRole("ADMINISTRATIVO", "SECRETARIA", "MEDICO", "DIRECTOR")
 
                 // CUALQUIER OTRA RUTA
                 .anyExchange().authenticated()
