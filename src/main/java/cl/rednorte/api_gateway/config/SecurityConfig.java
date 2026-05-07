@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .pathMatchers("/actuator/health").permitAll()
                 .pathMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                 .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-medico").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.GET, "/api/usuarios/staff").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
+                .pathMatchers(HttpMethod.PATCH, "/api/usuarios/*/rol").hasRole("DIRECTOR")
 
                 // RUTAS DE DIRECTOR
                 .pathMatchers(HttpMethod.POST, "/api/centros-medicos/**").hasRole("DIRECTOR")
