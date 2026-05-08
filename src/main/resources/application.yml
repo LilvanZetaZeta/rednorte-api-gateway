@@ -14,10 +14,25 @@ spring:
             allowedMethods: "*"
             allowedHeaders: "*"
       routes:
+       
+        - id: ms-portal-metricas-route
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/gestion/metricas/**
+            - Method=GET
+
+        - id: ms-portal-reservas-lectura-route
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/reservas/**
+            - Method=GET
+
+        
         - id: ms-gestion-route
           uri: ${MS_GESTION_URL:http://localhost:8081}
           predicates:
-            - Path=/api/gestion/**,/api/centros-medicos/**,/api/usuarios/**,/api/reservas/**,/api/lista-espera/**
+            - Path=/api/gestion/**,/api/centros-medicos/**,/api/usuarios/**,/api/reservas/**,/api/lista-espera/**,/api/especialidades/**
+        
         
         - id: ms-portal-route
           uri: ${MS_PORTAL_URL:http://localhost:8082}
@@ -33,6 +48,7 @@ spring:
           uri: ${MS_NOTIFICACIONES_URL:http://localhost:8085}
           predicates:
             - Path=/api/notificaciones/**
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
