@@ -2,17 +2,76 @@ server:
   port: ${PORT:8080}
 
 spring:
+  application:
+    name: api-gateway
+  
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "${MS_FRONTEND_URL:http://localhost:5173}"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
-        - id: ms-gestion
-          uri: ${MS_GESTION_URL}
+        # ─── MS-PORTAL (BFF / Lecturas)
+        - id: ms-portal-metricas
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
           predicates:
-            - Path=/api/gestion/**
-            
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${AUTH0_ISSUER_URI}
-          audiences: ${AUTH0_AUDIENCE}
+            - Path=/api/gestion/metricas/**
+
+        - id: ms-portal-reservas-get
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/reservas/**
+            - Method=GET
+
+        - id: ms-portal-usuarios-get
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/usuarios/**
+            - Method=GET
+
+        - id: ms-portal-especialidades-get
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/especialidades/**
+            - Method=GET
+
+        - id: ms-portal-centros-get
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/centros-medicos/**
+            - Method=GET
+
+        - id: ms-portal-perfil-paciente
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/perfil-pacientes/**
+
+        - id: ms-portal-historial-citas
+          uri: ${MS_PORTAL_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/historial-citas/**
+
+        # ─── OTROS MICROSERVICIOS INDEPENDIENTES 
+        - id: ms-reasignacion-route
+          uri: ${MS_REASIGNACION_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/reasignaciones/**
+        
+        - id: ms-notificaciones-route
+          uri: ${MS_NOTIFICACIONES_URL:http://localhost:8085}
+          predicates:
+            - Path=/api/notificaciones/**
+
+        # CORRECCIÓN: Rutas explícitas, no el comodín /api/**.
+        - id: ms-gestion-core
+          uri: ${MS_GESTION_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/gestion/**,/api/centros-medicos/**,/api/usuarios/**,/api/reservas/**,/api/lista-espera/**,/api/especialidades/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
