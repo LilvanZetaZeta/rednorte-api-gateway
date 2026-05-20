@@ -43,8 +43,10 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/api/centros-medicos/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/api/usuarios/medicos/buscar").permitAll()
 
-                //  RUTAS EXCLUSIVAS DE DIRECTOR (Integradas con las de tu compañero)
+                //  RUTAS EXCLUSIVAS DE DIRECTOR
                 .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-medico").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-admin").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.GET, "/api/usuarios/admins-disponibles").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.PATCH, "/api/usuarios/*/rol").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.POST, "/api/centros-medicos/**").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.PUT, "/api/centros-medicos/**").hasRole("DIRECTOR")
