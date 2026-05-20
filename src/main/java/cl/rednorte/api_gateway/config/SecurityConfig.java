@@ -43,6 +43,9 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/api/centros-medicos/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/api/usuarios/medicos/buscar").permitAll()
 
+                // ===== REGLA ESTRICTA DE BORRADO DE CITAS =====
+                .pathMatchers(HttpMethod.DELETE, "/api/reservas/**").hasRole("DIRECTOR")
+
                 //  RUTAS EXCLUSIVAS DE DIRECTOR
                 .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-medico").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-admin").hasRole("DIRECTOR")
