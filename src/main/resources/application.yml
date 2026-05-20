@@ -26,6 +26,12 @@ spring:
             - Path=/api/reservas/**
             - Method=GET
 
+        - id: ms-gestion-admins-disponibles
+          uri: ${MS_GESTION_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/usuarios/admins-disponibles
+            - Method=GET
+
         - id: ms-portal-usuarios-get
           uri: ${MS_PORTAL_URL:http://localhost:8082}
           predicates:
