@@ -50,12 +50,12 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-medico").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.POST, "/api/usuarios/asignar-admin").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.GET, "/api/usuarios/admins-disponibles").hasRole("DIRECTOR")
-                .pathMatchers(HttpMethod.PATCH, "/api/usuarios/*/rol").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.PATCH, "/api/usuarios/*/rol").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
                 .pathMatchers(HttpMethod.POST, "/api/centros-medicos/**").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.PUT, "/api/centros-medicos/**").hasRole("DIRECTOR")
                 .pathMatchers(HttpMethod.DELETE, "/api/centros-medicos/**").hasRole("DIRECTOR")
-                .pathMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("DIRECTOR")
-                .pathMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("DIRECTOR")
+                .pathMatchers(HttpMethod.PUT, "/api/usuarios/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
+                .pathMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
 
                 //  RUTAS DE DIRECTOR Y ADMINISTRATIVO LOCAL
                 .pathMatchers(HttpMethod.GET, "/api/usuarios/staff").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
