@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
 
                 //  RUTAS DE DIRECTOR Y ADMINISTRATIVO LOCAL
-                .pathMatchers(HttpMethod.GET, "/api/usuarios/staff").hasAnyRole("DIRECTOR", "ADMINISTRATIVO")
+                .pathMatchers(HttpMethod.GET, "/api/usuarios/staff").hasAnyRole("DIRECTOR", "ADMINISTRATIVO", "SECRETARIA")
                 
                 //  RUTAS DE MÉTRICAS (Director, Administrativo y Secretaria)
                 .pathMatchers(HttpMethod.GET, "/api/gestion/metricas/**").hasAnyRole("DIRECTOR", "ADMINISTRATIVO", "SECRETARIA")
