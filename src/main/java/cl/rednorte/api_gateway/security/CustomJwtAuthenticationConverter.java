@@ -22,17 +22,18 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
 
     public CustomJwtAuthenticationConverter(
             WebClient.Builder webClientBuilder,
-            @Value("${MS_GESTION_URL:http://localhost:8081}") String msGestionUrl) {
-        this.webClient = webClientBuilder.baseUrl(msGestionUrl).build();
+            // Ahora consultamos a MS_PORTAL porque él tiene las lecturas
+            @Value("${MS_PORTAL_URL:http://localhost:8082}") String msPortalUrl) {
+        this.webClient = webClientBuilder.baseUrl(msPortalUrl).build();
     }
 
     @Override
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
-
         String idAuth = jwt.getSubject();
 
         return webClient.get()
-                .uri("/api/usuarios/perfil/" + idAuth)
+                // La nueva ruta refactorizada en MS_PORTAL
+                .uri("/api/portal/usuarios/perfil/" + idAuth)
                 .retrieve()
                 .bodyToMono(UsuarioPerfilDto.class)
                 .map(perfil -> {
@@ -40,6 +41,9 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
                     return (AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, Collections.singletonList(authority));
                 })
                 .defaultIfEmpty((AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, Collections.emptyList()))
-                .onErrorResume(e -> Mono.just((AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, Collections.emptyList())));
+                .onErrorResume(e -> {
+                    System.err.println("Error al obtener perfil desde ms_portal: " + e.getMessage());
+                    return Mono.just((AbstractAuthenticationToken) new JwtAuthenticationToken(jwt, Collections.emptyList()));
+                });
     }
 }
