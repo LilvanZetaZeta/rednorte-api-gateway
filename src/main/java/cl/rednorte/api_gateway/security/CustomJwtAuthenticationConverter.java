@@ -29,26 +29,15 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
 
     public CustomJwtAuthenticationConverter(
             WebClient.Builder webClientBuilder,
-            // Ahora consultamos a MS_PORTAL porque él tiene las lecturas
             @Value("${MS_PORTAL_URL:http://localhost:8082}") String msPortalUrl) {
         this.webClient = webClientBuilder.baseUrl(msPortalUrl).build();
     }
 
-    /**
-     * Convierte un JWT de Supabase en un AbstractAuthenticationToken con los roles del usuario.
-     *
-     * <p><b>Política Fail-Closed:</b> Si el perfil del usuario no existe en ms-portal,
-     * si el rol es nulo, o si ms-portal responde con un error 5xx, la conversión falla
-     * lanzando una excepción que el filter chain traduce a 401/403. Nunca se devuelve
-     * un token con authorities vacías, lo que antes permitía que rutas con
-     * {@code .anyExchange().authenticated()} fuesen accesibles sin roles.</p>
-     */
     @Override
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
         String idAuth = jwt.getSubject();
 
         return webClient.get()
-                // La nueva ruta refactorizada en MS_PORTAL
                 .uri("/api/portal/usuarios/perfil/" + idAuth)
                 .retrieve()
                 .bodyToMono(UsuarioPerfilDto.class)
@@ -59,8 +48,8 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
                                 "El usuario autenticado no tiene un perfil o rol válido en el sistema."));
                     }
                     GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + perfil.getRol());
-                    return Mono.just((AbstractAuthenticationToken)
-                            new JwtAuthenticationToken(jwt, Collections.singletonList(authority)));
+                    return Mono.just((AbstractAuthenticationToken) new JwtAuthenticationToken(jwt,
+                            Collections.singletonList(authority)));
                 })
                 .onErrorMap(WebClientResponseException.class, ex -> {
                     if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
